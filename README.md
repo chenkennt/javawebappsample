@@ -64,20 +64,18 @@ General setup:
 3. Create an Azure service principal via [portal](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) or [CLI](https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?toc=%2fazure%2fazure-resource-manager%2ftoc.json).
 4. Open Jenkins, go to Credentials, add a new Microsoft Azure Service Principal using the credential information you just created.
 
-### Deploy with Azure CLI
+### Deploy using Azure CLI
 You can always use Azure CLI to deploy web app to Azure using a Jenkins pipeline, here're sample for [FTP approach](Jenkinsfile_ftp_azcli) and [container approach](Jenkinsfile_container_azcli).
 
-### Deploy with Azure App Service Plugin
+### Deploy using Azure App Service Plugin
 With Azure app service plugin, you can deploy to Azure web app more easily.
 
 #### Use freestyle project
 1. Create a freestyle project
 2. Add a build step to invoke `clean package` maven goals.
 3. Add a post-build action 'Publish an Azure Web App', select appropriate credential, resource group name and web app name.
-4. To publish through FTP, select "Publish Files", fill in the `.war` file to deploy, source directory (`target`) and target directory (`webapps`). (If you need to deplo to ROOT, you need a small step to rename your war file to `ROOT.war`.)
+4. To publish through FTP, select "Publish Files", fill in the `.war` file to deploy, source directory (`target`) and target directory (`webapps`). (If you need to deplo to ROOT, you need to add a step yourself to rename your war file to `ROOT.war`.)
 5. To publish through container, select "Publish via Docker", fill in Dockerfile path, docker registry URL and registry credentials (you need to create a username/password credential first). (Docker image name is read from your web app configuration, you need to fill it in when creating a new web app or explicitly specify it in docker image in advanced properties.)
 
-### Use pipeline
-
-
-
+#### Use pipeline
+Please refer to the sample pipeline of [FTP approach](Jenkinsfile_ftp_plugin) and [container approach](Jenkinsfile_container_plugin).
