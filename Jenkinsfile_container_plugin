@@ -8,8 +8,8 @@ node {
   }
   
   stage('deploy') {
-    def resourceGroup = 'kenchenwebapp1'
-    def webAppName = 'kenchenwebapp1'
+    def resourceGroup = 'kenchenwebapplinux1'
+    def webAppName = 'kenchenwebapplinux1'
     def registryServer = 'kenchenacrtest.azurecr.io'
     def imageTag = sh script: 'git describe | tr -d "\n"', returnStdout: true
     def imageName = "$registryServer/calculator"
