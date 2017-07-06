@@ -13,6 +13,6 @@ node {
     def registryServer = 'kenchenacrtest.azurecr.io'
     def imageTag = sh script: 'git describe | tr -d "\n"', returnStdout: true
     def imageName = "$registryServer/calculator"
-    azureWebAppPublish azureCredentialsId: 'vs_china_jenkins', publishType: 'docker', resourceGroup: resourceGroup, appService: webAppName, dockerFilePath: 'Dockerfile', dockerImageName: imageName, dockerImageTag: imageTag, dockerRegistryEndpoint: [credentialsId: 'kenchenacrtest', url: "http://$registryServer"]
+    azureWebAppPublish azureCredentialsId: 'vs_china_jenkins', publishType: 'docker', resourceGroup: resourceGroup, webApp: webAppName, dockerImageName: imageName, dockerImageTag: imageTag, dockerRegistryEndpoint: [credentialsId: 'kenchenacrtest', url: "http://$registryServer"]
   }
 }

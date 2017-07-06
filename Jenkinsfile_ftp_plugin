@@ -11,6 +11,6 @@ node {
     def resourceGroup = 'kenchenwebapp1'
     def webAppName = 'kenchenwebapp1'
     sh 'mv target/*.war target/ROOT.war'
-    azureWebAppPublish azureCredentialsId: 'vs_china_jenkins', publishType: 'file', resourceGroup: resourceGroup, appService: webAppName, filePath: '*.war', sourceDirectory: 'target', targetDirectory: 'webapps'
+    azureWebAppPublish azureCredentialsId: 'vs_china_jenkins', publishType: 'file', resourceGroup: resourceGroup, webApp: webAppName, filePath: '*.war', sourceDirectory: 'target', targetDirectory: 'webapps'
   }
 }
