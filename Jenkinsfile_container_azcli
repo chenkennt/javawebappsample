@@ -15,9 +15,6 @@ node {
   }
   
   stage('deploy') {
-
-    azureWebAppPublish azureCredentialsId: 'vs_china_jenkins', appService: 'kenchenwebapp1', , deleteTempImage: true, deployOnlyIfSuccessful: true, dockerFilePath: '**/Dockerfile', dockerImageName: '', dockerImageTag: '', dockerRegistryEndpoint: [], filePath: '', publishType: 'git', resourceGroup: '', slotName: '', sourceDirectory: '', targetDirectory: ''
-
     def webAppResourceGroup = 'kenchenwebapplinux1'
     def webAppName = 'kenchenwebapplinux1'
     def acrName = 'kenchenacrtest'
