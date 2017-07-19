@@ -48,6 +48,34 @@ Rename the `.war` file in `target` folder to `ROOT.war` and upload it to your Az
 4. In Docker Container settings of Web App, fill in image name, server URL, username and password of your ACR.
 5. Save the changes and you'll be able to access the web app in a few seconds.
 
+## Deploy to Azure Container Service using Kubernetes
+1. Create an Azure Container Service using Kubernetes as orchestrator.
+2. Install kubectl and connect to ACS using kubectl (refer to [this doc](https://docs.microsoft.com/en-us/azure/container-service/container-service-tutorial-kubernetes-deploy-cluster)).
+3. Create a secret for private container registry
+   ```
+   kubectl create secret docker-registry <secret name> \
+     --docker-server=<your ACR server> \
+     --docker-username=<client id> \
+     --docker-password=<client secret> \
+     --docker-email=<your email>
+   ```
+4. Build docker image and push to ACR (same as step 2 in previous section).
+5. Update `image` and `imagePullSecrets` property in `deployment.yaml` with image and secret name you just created.
+6. Create a deployment in Kubernetes:
+   ```
+   kubectl create -f deployment.yaml
+   ```
+7. Create a service in Kubernetes:
+   ```
+   kubectl create -f service.yaml
+   ```
+8. Open Kubernetes to verify the deployment result:
+   ```
+   kubectl proxy
+   ```
+   Open http://localhost:8001/ui, go to Services, check calculator service to get external endpoint.
+   Open external endpoint to access the web app.
+
 ## Setup Continuous Deployment with Azure using Jenkins
 General setup:
 1. Go to Settings -> Integration & services, click Add service, choose Jenkins (GitHub plugin), fill in Jenkins hook url with `http://<your jenkins server>/github-webhook/`
