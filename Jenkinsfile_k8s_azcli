@@ -43,7 +43,7 @@ node {
       sh "sed 's/\$tag/$version/g' deployment.yaml > target/deployment.yaml"
       // update deployment
       sh 'cat target/deployment.yaml'
-      sh 'kubectl apply -f target/deployment.yaml'
+      sh 'kubectl apply -f deployment.yaml'
       // log out
       sh 'az logout'
       sh "docker logout $loginServer"
