@@ -1,18 +1,35 @@
-apiVersion: apps/v1beta1
-kind: Deployment
-metadata:
-  name: calculator
-spec:
-  replicas: 2
-  template:
-    metadata:
-      labels:
-        app: calculator
-    spec:
-      containers:
-      - name: calculator
-        image: kenchenacrtest.azurecr.io/calculator:$tag
-        ports:
-        - containerPort: 8080
-      imagePullSecrets:
-      - name: kenchenacrtest
+{
+  "kind": "Deployment", 
+  "spec": {
+    "template": {
+      "spec": {
+        "imagePullSecrets": [
+          {
+            "name": "kenchenacrtest"
+          }
+        ], 
+        "containers": [
+          {
+            "image": "kenchenacrtest.azurecr.io/calculator:$tag", 
+            "name": "calculator", 
+            "ports": [
+              {
+                "containerPort": 8080
+              }
+            ]
+          }
+        ]
+      }, 
+      "metadata": {
+        "labels": {
+          "app": "calculator"
+        }
+      }
+    }, 
+    "replicas": 2
+  }, 
+  "apiVersion": "apps/v1beta1", 
+  "metadata": {
+    "name": "calculator"
+  }
+}
