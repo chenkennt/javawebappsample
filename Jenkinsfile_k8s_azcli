@@ -40,7 +40,7 @@ node {
       // push image
       image.push()
       // update web app docker settings
-      sh "sed 's/${tag}/$version/g' deployment.yaml > target/deployment.yaml"
+      sh "sed 's/\\${tag}/$version/g' deployment.yaml > target/deployment.yaml"
       // log out
       sh 'az logout'
       sh "docker logout $loginServer"
