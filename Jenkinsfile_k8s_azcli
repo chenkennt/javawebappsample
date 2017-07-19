@@ -39,8 +39,10 @@ node {
       def image = docker.build imageWithTag
       // push image
       image.push()
-      // update web app docker settings
+      // update deployment.yaml with latest tag
       sh "sed 's/\$tag/$version/g' deployment.yaml > target/deployment.yaml"
+      // update deployment
+      sh 'kubectl apply target/deployment.yaml'
       // log out
       sh 'az logout'
       sh "docker logout $loginServer"
