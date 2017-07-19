@@ -22,6 +22,7 @@ node {
     // generate version, it's important to remove the trailing new line in git describe output
     def version = sh script: 'git describe | tr -d "\n"', returnStdout: true
     withCredentials([azureServicePrincipal('vs_china_jenkins')]) {
+      /*
       // login Azure
       sh '''
         az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
@@ -42,7 +43,7 @@ node {
       // update deployment.yaml with latest tag
       // sh "sed 's/\$tag/$version/g' deployment.yaml > target/deployment.yaml"
       // update deployment
-      // sh 'cat target/deployment.yaml'
+      // sh 'cat target/deployment.yaml'*/
       sh 'kubectl apply -f abc.json'
       // log out
       sh 'az logout'
