@@ -48,6 +48,6 @@ node {
       sh 'az logout'
       sh "docker logout $loginServer"*/
     }
-    sh "./kubeapply"
+    sh "./kubeapply.sh"
   }
 }
