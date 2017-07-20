@@ -91,9 +91,13 @@ General setup:
    * Azure app service
 3. Create an Azure service principal via [portal](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) or [CLI](https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?toc=%2fazure%2fazure-resource-manager%2ftoc.json).
 4. Open Jenkins, go to Credentials, add a new Microsoft Azure Service Principal using the credential information you just created.
+5. If you want to deploy to Kubernetes, install `kubectl` and connect to ACS on your Jenkins instance (please be noted you have to do this using `jenkins` account).
 
 ### Deploy using Azure CLI
-You can always use Azure CLI to deploy web app to Azure using a Jenkins pipeline, here're sample for [FTP approach](Jenkinsfile_ftp_azcli) and [container approach](Jenkinsfile_container_azcli).
+You can always use Azure CLI to deploy web app to Azure using a Jenkins pipeline, here're a few samples:
+1. Azure Web App using [FTP approach](Jenkinsfile_ftp_azcli)
+2. Azure Web App using [Container approach](Jenkinsfile_container_azcli).
+3. ACS using [Kubernetes](Jenkinsfile_k8s_azcli).
 
 ### Deploy using Azure App Service Plugin
 With Azure app service plugin, you can deploy to Azure web app more easily.
