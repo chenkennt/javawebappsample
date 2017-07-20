@@ -96,7 +96,7 @@ General setup:
 ### Deploy using Azure CLI
 You can always use Azure CLI to deploy web app to Azure using a Jenkins pipeline, here're a few samples:
 1. Azure Web App using [FTP approach](Jenkinsfile_ftp_azcli)
-2. Azure Web App using [Container approach](Jenkinsfile_container_azcli).
+2. Azure Web App using [container approach](Jenkinsfile_container_azcli).
 3. ACS using [Kubernetes](Jenkinsfile_k8s_azcli).
 
 ### Deploy using Azure App Service Plugin
