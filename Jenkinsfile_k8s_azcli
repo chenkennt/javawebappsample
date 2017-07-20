@@ -48,6 +48,6 @@ node {
       sh 'az logout'
       sh "docker logout $loginServer"*/
     }
-    sh "cat deployment.json | kubectl apply -f -"
+    sh "./kubeapply"
   }
 }
