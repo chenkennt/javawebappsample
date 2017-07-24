@@ -15,4 +15,4 @@ spec:
         ports:
         - containerPort: 8080
       imagePullSecrets:
-      - name: kenchenacrtest
+      - name: $KUBERNETES_SECRET_NAME
