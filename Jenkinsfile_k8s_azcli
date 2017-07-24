@@ -40,7 +40,7 @@ node {
       // push image
       image.push()
       // update deployment.yaml with latest tag
-      sh "sed 's/\$tag/$version/g' deployment.yaml > target/deployment.yaml"
+      sh "sed 's/\$TAG/$version/g' deployment.yaml > target/deployment.yaml"
       // update deployment
       sh 'kubectl apply -f target/deployment.yaml'
       // log out
