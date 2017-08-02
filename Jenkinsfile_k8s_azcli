@@ -44,7 +44,8 @@ node {
       // get kubernetes config
       def serverAndUser = parseJsonFromOutput("az acs show -g $acsGroup -n $acsName", { o -> [server: o.masterProfile.fqdn, user: o.linuxProfile.adminUsername] })
       sshagent([acsCred]) {
-        sh "scp $serverAndUser.user@$serverAndUser.server:.kube/config kubeconfig"
+        sh "ssh $serverAndUser.user@$serverAndUser.server uname -a"
+        // sh "scp $serverAndUser.user@$serverAndUser.server:.kube/config kubeconfig"
       }
 
       /*

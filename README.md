@@ -89,6 +89,7 @@ General setup:
    * Docker pipeline
    * Credentials binding
    * Azure app service
+   * SSH agent
 3. Create an Azure service principal via [portal](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) or [CLI](https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?toc=%2fazure%2fazure-resource-manager%2ftoc.json).
 4. Open Jenkins, go to Credentials, add a new Microsoft Azure Service Principal using the credential information you just created.
 5. If you want to deploy to Kubernetes, install `kubectl` and connect to ACS on your Jenkins instance (please be noted you have to do this using `jenkins` account).
