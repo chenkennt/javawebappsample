@@ -44,9 +44,12 @@ node {
       // get kubernetes config
       def serverAndUser = parseJsonFromOutput("az acs show -g $acsGroup -n $acsName", { o -> [server: o.masterProfile.fqdn, user: o.linuxProfile.adminUsername] })
       sshagent([acsCred]) {
-        sh "ssh -o StrictHostKeyChecking=no $serverAndUser.user@$serverAndUser.server uname -a"
-        // sh "scp $serverAndUser.user@$serverAndUser.server:.kube/config kubeconfig"
+        sh "scp -o StrictHostKeyChecking=no $serverAndUser.user@$serverAndUser.server:.kube/config kubeconfig"
       }
+      // deploy to kubernetes
+      sh '''
+        kubectl apply -f service.yaml --kubeconfig=kubeconfig
+      '''
 
       /*
 
