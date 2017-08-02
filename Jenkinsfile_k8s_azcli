@@ -6,60 +6,70 @@ def parseJsonFromOutput(cmd, def callback) {
 }
 
 node {
+  def acrGroup = 'kenchenacrtest'
+  def acrName = 'kenchenacrtest'
+  def acsGroup = 'kenchenacskube1'
+  def acsName = 'kenchenacskube1'
+  def imageName = 'calculator'
+  def azureCred = 'vs_china_jenkins'
+  def acsCred = 'kenchenacskube1'
+    // login to Azure
+  withCredentials([azureServicePrincipal(azureCred)]) {
   stage('init') {
+    // git clone
     checkout scm
-  }
-  
-  stage('build') {
-    sh 'mvn clean package'
-  }
-  
-  stage('deploy') {
-    def acrGroup = 'kenchenacrtest'
-    def acrName = 'kenchenacrtest'
-    def acsGroup = 'kenchenacskube1'
-    def acsName = 'kenchenacskube1'
-    def imageName = 'calculator'
-    def azureCred = 'vs_china_jenkins'
-    def acsCred = 'kenchenacskube1'
-    // generate version, it's important to remove the trailing new line in git describe output
-    def version = sh script: 'git describe | tr -d "\n"', returnStdout: true
-    withCredentials([azureServicePrincipal(azureCred)]) {
-      // login Azure
       sh '''
         az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
         az account set -s $AZURE_SUBSCRIPTION_ID
       '''
-      // get login server
-      def loginServer = parseJsonFromOutput("az acr show -g $acrGroup -n $acrName", { o -> o.loginServer })
-      // login docker
-      // docker.withRegistry only supports credential ID, so use native docker command to login
-      // you can also use docker.withRegistry if you add a credential
-      sh "docker login -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET $loginServer"
-      // build image
-      def imageWithTag = "$loginServer/$imageName:$version"
-      def image = docker.build imageWithTag
-      // push image
-      image.push()
-      // get kubernetes config
-      def serverAndUser = parseJsonFromOutput("az acs show -g $acsGroup -n $acsName", { o -> [server: o.masterProfile.fqdn, user: o.linuxProfile.adminUsername] })
-      sshagent([acsCred]) {
-        sh "scp -o StrictHostKeyChecking=no $serverAndUser.user@$serverAndUser.server:.kube/config kubeconfig"
-      }
-      // deploy to kubernetes
-      sh '''
-        kubectl apply -f service.yaml --kubeconfig=kubeconfig
-      '''
+  }
+  
+  stage('build') {
+    // maven build
+    sh 'mvn clean package'
 
-      /*
+    // docker build
+    // generate version, it's important to remove the trailing new line in git describe output
+    def version = sh script: 'git describe | tr -d "\n"', returnStdout: true
+    // get login server
+    def loginServer = parseJsonFromOutput("az acr show -g $acrGroup -n $acrName", { o -> o.loginServer })
+    // login docker
+    // docker.withRegistry only supports credential ID, so use native docker command to login
+    // you can also use docker.withRegistry if you add a credential
+    sh "docker login -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET $loginServer"
+    // build image
+    def imageWithTag = "$loginServer/$imageName:$version"
+    def image = docker.build imageWithTag
+    // push image
+    image.push()
+    // logout docker
+    sh "docker logout $loginServer"
+    // update image tag in k8s yaml
+    sh "sed 's/\$IMAGE_TAG/$imageWithTag/g' deployment.yaml > target/deployment.yaml"
+  }
 
-      // update deployment.yaml with latest tag
-      sh "sed 's/\$TAG/$version/g' deployment.yaml > target/deployment.yaml"
-      // update deployment
-      sh 'kubectl apply -f target/deployment.yaml'
-      // log out
-      sh 'az logout'
-      sh "docker logout $loginServer"*/
+  stage('deploy') {
+    // get kubernetes config
+    def serverAndUser = parseJsonFromOutput("az acs show -g $acsGroup -n $acsName", { o -> [server: o.masterProfile.fqdn, user: o.linuxProfile.adminUsername] })
+    sshagent([acsCred]) {
+      sh "scp -o StrictHostKeyChecking=no $serverAndUser.user@$serverAndUser.server:.kube/config kubeconfig"
     }
+    // create secret
+    sh "kubectl create secret docker-registry $acrName --docker-server=$acrName --docker-username=$AZURE_CLIENT_ID --docker-password=$AZURE_CLIENT_SECRET --docker-email=$AZURE_CLIENT_ID"
+    // update deployment.yaml with latest tag
+    sh "sed 's/\$KUBERNETES_SECRET_NAME/$acrName/g' target/deployment.yaml > target/deployment.yaml"
+    // deploy to kubernetes
+    sh '''
+      kubectl apply -f service.yaml --kubeconfig=kubeconfig
+      kubectl apply -f target/deployment.yaml
+    '''
+    // update deployment
+    sh 'rm kubeconfig'
+  }
+
+  stage('cleanup') {
+    // log out
+    sh 'az logout'
+  }
   }
 }
