@@ -20,9 +20,11 @@ node {
     def acsGroup = 'kenchenacskube1'
     def acsName = 'kenchenacskube1'
     def imageName = 'calculator'
+    def azureCred = 'vs_china_jenkins'
+    def acsCred = 'kenchenacskube1'
     // generate version, it's important to remove the trailing new line in git describe output
     def version = sh script: 'git describe | tr -d "\n"', returnStdout: true
-    withCredentials([azureServicePrincipal('vs_china_jenkins')]) {
+    withCredentials([azureServicePrincipal(azureCred)]) {
       // login Azure
       sh '''
         az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID
@@ -41,7 +43,9 @@ node {
       image.push()
       // get kubernetes config
       def serverAndUser = parseJsonFromOutput("az acs show -g $acsGroup -n $acsName", { o -> [server: o.masterProfile.fqdn, user: o.linuxProfile.adminUsername] })
-      sh "scp $serverAndUser.server:.kube/config kubeconfig"
+      sshagent([acsCred]) {
+        sh "scp $serverAndUser.user@$serverAndUser.server:.kube/config kubeconfig"
+      }
 
       /*
 
