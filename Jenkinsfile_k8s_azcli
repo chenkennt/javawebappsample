@@ -45,7 +45,8 @@ node {
     // logout docker
     sh "docker logout $loginServer"
     // update image tag in k8s yaml
-    sh "sed 's/\$IMAGE_TAG/$imageWithTag/g' deployment.yaml > target/deployment.yaml"
+    def escaped = imageWithTag.replace('/', '\\/')
+    sh "sed 's/\$IMAGE_TAG/$escaped/g' deployment.yaml > target/deployment.yaml"
   }
 
   stage('deploy') {
