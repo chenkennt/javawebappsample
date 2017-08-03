@@ -53,10 +53,9 @@ node {
       sshagent([acsCred]) {
         sh "scp -o StrictHostKeyChecking=no $serverAndUser.user@$serverAndUser.server:.kube/config kubeconfig"
       }
-      // update deployment.yaml with image tag and secret name
-      def escaped = imageWithTag.replace('/', '\\/')
-      // deploy to kubernetes
+      // update deployment.yaml with image tag and secret name and deploy
       sh "kubectl apply -f service.yaml --kubeconfig=kubeconfig"
+      def escaped = imageWithTag.replace('/', '\\/')
       sh "sed 's/\$IMAGE_TAG/$escaped/g;s/\$KUBERNETES_SECRET_NAME/$acrName/g' deployment.yaml | kubectl apply --kubeconfig=kubeconfig -f -"
       // remote config file
       sh 'rm kubeconfig'
