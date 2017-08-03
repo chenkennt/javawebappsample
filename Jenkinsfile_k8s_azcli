@@ -56,11 +56,9 @@ node {
       // update deployment.yaml with image tag and secret name
       def escaped = imageWithTag.replace('/', '\\/')
       // deploy to kubernetes
-      sh '''
-        kubectl apply -f service.yaml --kubeconfig=kubeconfig
-        sed 's/\$IMAGE_TAG/$escaped/g' deployment.yaml | sed 's/\$KUBERNETES_SECRET_NAME/$acrName/g' | kubectl apply --kubeconfig=kubeconfig -f -
-      '''
-      // update deployment
+      sh "kubectl apply -f service.yaml --kubeconfig=kubeconfig"
+      sh "sed 's/\$IMAGE_TAG/$escaped/g' deployment.yaml | sed 's/\$KUBERNETES_SECRET_NAME/$acrName/g' | kubectl apply --kubeconfig=kubeconfig -f -"
+      // remote config file
       sh 'rm kubeconfig'
 
       // logout from Azure
